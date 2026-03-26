@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ManipArena — Real-World Robot Manipulation Benchmark</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        bg: '#EEECE4',
+        warm: '#E6E0CB',
+        vla: '#E15759',
+        wam: '#4E79A7',
+        mob: '#59A14F',
+        success: '#5A9E6F',
+      },
+      fontFamily: {
+        serif: ['"Source Serif 4"', 'Georgia', 'serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
+      },
+    },
+  },
+}
+</script>
+<style>
+  body { background: #EEECE4; }
+  .heading-anchor { opacity: 0; transition: opacity 0.15s; }
+  .sec-heading:hover .heading-anchor { opacity: 1; }
+  .stat-num { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+
+<body class="text-black font-sans antialiased">
+
+<!-- Nav -->
+<nav class="sticky top-0 z-50 bg-bg/90 backdrop-blur-md border-b border-warm/60">
+  <div class="max-w-3xl mx-auto flex justify-between items-baseline px-6 py-4">
+    <a href="https://byterainx.github.io" class="font-serif text-lg font-semibold tracking-tight">ByteRainx</a>
+    <div class="flex gap-6 text-sm">
+      <a href="https://byterainx.github.io" class="hover:underline underline-offset-4">/Home</a>
+      <a href="https://maniparena.x2robot.com" class="hover:underline underline-offset-4">/Competition</a>
+      <a href="https://maniparena.x2robot.com/maniparena.pdf" class="hover:underline underline-offset-4">/Paper</a>
+    </div>
+  </div>
+</nav>
+
+<main class="max-w-3xl mx-auto px-6 pt-16 pb-24">
+
+  <!-- Header -->
+  <header class="mb-16">
+    <h1 class="font-serif text-4xl md:text-5xl font-semibold leading-[1.15] mb-6">
+      ManipArena: Mapping the Capability Boundaries of Embodied AI
+    </h1>
+    <p class="text-lg text-black/55 leading-relaxed mb-10">
+      A 20-task real-robot benchmark for the CVPR 2026 Embodied AI Workshop. One model, all tasks, no simulation — how far can today's best manipulation policies actually go?
+    </p>
+    <div class="flex flex-wrap gap-x-8 gap-y-2 text-sm text-black/40 font-mono border-t border-warm pt-6">
+      <span>March 2026</span>
+      <span>ManipArena Team</span>
+      <a href="https://maniparena.x2robot.com/maniparena.pdf" class="underline underline-offset-4 hover:text-black">arXiv</a>
+      <a href="https://huggingface.co/datasets/ManipArena/maniparena-dataset" class="underline underline-offset-4 hover:text-black">Dataset</a>
+    </div>
+  </header>
+
+  <!-- Stats Bar -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20">
+    <div>
+      <div class="font-serif text-3xl font-bold stat-num">20</div>
+      <div class="text-xs text-black/40 mt-1">Tasks</div>
+    </div>
+    <div>
+      <div class="font-serif text-3xl font-bold stat-num">10,812</div>
+      <div class="text-xs text-black/40 mt-1">Trajectories</div>
+    </div>
+    <div>
+      <div class="font-serif text-3xl font-bold stat-num">188h</div>
+      <div class="text-xs text-black/40 mt-1">Robot Data</div>
+    </div>
+    <div>
+      <div class="font-serif text-3xl font-bold stat-num">42.7%</div>
+      <div class="text-xs text-black/40 mt-1">Best Score</div>
+    </div>
+  </div>
+
+  <!-- Section 1: The Problem -->
+  <h2 id="problem" class="sec-heading font-serif text-2xl font-semibold mb-6 relative">
+    <a href="#problem" class="heading-anchor absolute -left-6 text-black/20">#</a>
+    The Problem
+  </h2>
+
+  <div class="space-y-5 text-[16.5px] leading-[1.8] text-black/75 mb-20">
+    <p>Most robot learning benchmarks live in simulation. The few real-robot evaluations that exist typically test a handful of tasks, on a single hardware setup, under conditions the model was trained on. This makes it nearly impossible to answer a basic question: <strong>what can a generalist manipulation policy actually do in the physical world?</strong></p>
+    <p>ManipArena is designed to answer that question. It is a server-side evaluation platform where participants submit a single HTTP inference endpoint, and we run it across 20 reasoning-oriented tasks on real robots — with systematic out-of-distribution testing, partial-credit scoring, and multi-dimensional capability diagnostics.</p>
+  </div>
+
+  <!-- Section 2: 20 Tasks -->
+  <h2 id="tasks" class="sec-heading font-serif text-2xl font-semibold mb-6 relative">
+    <a href="#tasks" class="heading-anchor absolute -left-6 text-black/20">#</a>
+    20 Tasks, No Easy Ones
+  </h2>
+
+  <div class="space-y-5 text-[16.5px] leading-[1.8] text-black/75 mb-8">
+    <p>Every task in ManipArena requires reasoning. We organize them into three categories based on the <em>type</em> of reasoning demanded:</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div>
+      <div class="font-mono text-[10px] uppercase tracking-widest mb-2" style="color: #4e79a7;">Execution Reasoning</div>
+      <div class="font-semibold text-sm mb-1">10 tasks</div>
+      <div class="text-xs text-black/50 leading-relaxed">The goal is clear; the challenge is <em>how</em>. Precision insertion, bimanual pouring, force-sensitive zipping, coordinated grasping.</div>
+    </div>
+    <div>
+      <div class="font-mono text-[10px] uppercase tracking-widest mb-2" style="color: #e15759;">Semantic Reasoning</div>
+      <div class="font-semibold text-sm mb-1">5 tasks</div>
+      <div class="text-xs text-black/50 leading-relaxed">The challenge is <em>what</em> to do. Sort headphones by type, follow a printed color sequence, infer matching rules from visual arrangements.</div>
+    </div>
+    <div>
+      <div class="font-mono text-[10px] uppercase tracking-widest mb-2" style="color: #59a14f;">Mobile Manipulation</div>
+      <div class="font-semibold text-sm mb-1">5 tasks</div>
+      <div class="text-xs text-black/50 leading-relaxed">Long-horizon navigation + manipulation. Hang a picture, organize shoes, fold and put away clothes. 4.3x longer episodes.</div>
+    </div>
+  </div>
+
+</main>
+<div class="max-w-5xl mx-auto px-6 mb-16">
+  <img src="figs/fig_task_overview_grid_v2.png" alt="ManipArena 20 task overview" class="w-full rounded-lg"/>
+  <div class="text-center text-xs text-black/30 mt-3 font-mono">All 20 ManipArena tasks organized by category</div>
+</div>
+<main class="max-w-3xl mx-auto px-6">
+
+  <!-- Section 3: Controlled Environment -->
+  <h2 id="environment" class="sec-heading font-serif text-2xl font-semibold mb-6 relative">
+    <a href="#environment" class="heading-anchor absolute -left-6 text-black/20">#</a>
+    Controlled Environment + Systematic OOD
+  </h2>
+
+  <div class="space-y-5 text-[16.5px] leading-[1.8] text-black/75 mb-8">
+    <p>All evaluations run inside a <strong>green-screen enclosed booth</strong> with fixed studio lighting. This isn't aesthetic — it's methodological. By controlling the physical environment, we isolate the variables that actually matter: object properties, spatial configurations, and semantic compositions.</p>
+    <p>Each task follows a <strong>10-trial stratified evaluation</strong> protocol. Trials T1–T4 are in-distribution. Trials T5–T8 introduce visual shifts (new positions, orientations). Trials T9–T10 test true OOD — objects the model has never seen during training. This layered design lets us chart a model's generalization curve, not just a single pass/fail number.</p>
+  </div>
+
+</main>
+<div class="max-w-5xl mx-auto px-6 mb-8">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <img src="figs/robot_setup_annotated_v3.png" alt="Robot setup" class="w-full rounded-lg"/>
+      <div class="text-center text-xs text-black/30 mt-2 font-mono">Controlled evaluation environment</div>
+    </div>
+    <div>
+      <img src="figs/fig_ood_degradation.png" alt="OOD degradation curves" class="w-full rounded-lg"/>
+      <div class="text-center text-xs text-black/30 mt-2 font-mono">Performance degradation under increasing OOD</div>
+    </div>
+  </div>
+</div>
+<main class="max-w-3xl mx-auto px-6">
+
+  <div class="text-[16.5px] leading-[1.8] text-black/75 mb-20">
+    <p>The OOD degradation curves above tell a clear story: all three models degrade under distribution shift, but at very different rates. DreamZero shows remarkable spatial robustness (-8% on position shifts), while the VLA models drop much more steeply (-57% for Single).</p>
+  </div>
+
+  <!-- Section 4: Dataset -->
+  <h2 id="dataset" class="sec-heading font-serif text-2xl font-semibold mb-6 relative">
+    <a href="#dataset" class="heading-anchor absolute -left-6 text-black/20">#</a>
+    10,812 Trajectories in the Open
+  </h2>
+
+  <div class="space-y-5 text-[16.5px] leading-[1.8] text-black/75 mb-8">
+    <p>We release the full training dataset in <strong>LeRobot v2.1 format</strong> — 10,812 teleoperated trajectories, 188 hours of robot data, 451–645 demonstrations per task. Each trajectory includes:</p>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 text-center">
+    <div>
+      <div class="font-mono text-sm font-bold">14D</div>
+      <div class="text-xs text-black/40">End-effector poses</div>
+    </div>
+    <div>
+      <div class="font-mono text-sm font-bold">14D</div>
+      <div class="text-xs text-black/40">Joint positions</div>
+    </div>
+    <div>
+      <div class="font-mono text-sm font-bold">14D</div>
+      <div class="text-xs text-black/40">Joint velocities</div>
+    </div>
+    <div>
+      <div class="font-mono text-sm font-bold">14D</div>
+      <div class="text-xs text-black/40">Motor currents</div>
+    </div>
+  </div>
+
+</main>
+<div class="max-w-5xl mx-auto px-6 mb-20">
+  <img src="figs/fig15_dataset_overview_v6.png" alt="Dataset overview" class="w-full rounded-lg"/>
+  <div class="text-center text-xs text-black/30 mt-3 font-mono">Per-task trajectory counts, episode durations, and frame counts</div>
+</div>
+<main class="max-w-3xl mx-auto px-6">
+
+  <div class="text-[16.5px] leading-[1.8] text-black/75 mb-20">
+    <p>The 56-dimensional state space goes far beyond standard joint positions. Motor currents enable the study of <strong>contact-aware control</strong> — a capability frontier where all current models score below 30/100. Joint velocities provide a direct signal for dynamic manipulation behaviors.</p>
+  </div>
+
+  <!-- Section 5: Baseline Results -->
+  <h2 id="baselines" class="sec-heading font-serif text-2xl font-semibold mb-6 relative">
+    <a href="#baselines" class="heading-anchor absolute -left-6 text-black/20">#</a>
+    Baseline Experiments
+  </h2>
+
+  <div class="space-y-5 text-[16.5px] leading-[1.8] text-black/75 mb-8">
+    <p>We evaluate three representative models spanning two paradigms:</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+    <div>
+      <div class="font-mono text-[10px] uppercase tracking-widest text-black/35 mb-2"><span class="font-serif italic text-sm">π</span><sub>0.5</sub>-Single</div>
+      <div class="font-semibold text-sm mb-1">Task-Specific VLA</div>
+      <div class="text-xs text-black/50">Fine-tuned per task. VLM backbone (PaliGemma). 626.3/1500</div>
+    </div>
+    <div>
+      <div class="font-mono text-[10px] uppercase tracking-widest text-black/35 mb-2"><span class="font-serif italic text-sm">π</span><sub>0.5</sub>-OneModel</div>
+      <div class="font-semibold text-sm mb-1">Unified Multi-Task VLA</div>
+      <div class="text-xs text-black/50">Single model, all 15 tasks. Best overall: <strong>640.5/1500 (42.7%)</strong></div>
+    </div>
+    <div>
+      <div class="font-mono text-[10px] uppercase tracking-widest text-black/35 mb-2">DreamZero</div>
+      <div class="font-semibold text-sm mb-1">World Action Model</div>
+      <div class="text-xs text-black/50">Video diffusion backbone (Wan 14B). 500.3/1500</div>
+    </div>
+  </div>
+
+</main>
+<div class="max-w-5xl mx-auto px-6 mb-8">
+  <img src="figs/fig_baseline_scores.png" alt="Baseline scores" class="w-full rounded-lg"/>
+  <div class="text-center text-xs text-black/30 mt-3 font-mono">Per-task scores for all three baseline models</div>
+</div>
+<main class="max-w-3xl mx-auto px-6">
+
+  <div class="text-[16.5px] leading-[1.8] text-black/75 mb-20">
+    <p>The best model achieves only <strong>42.7%</strong> — the benchmark is far from saturated. Four tasks remain below 30/100 for all models, and no single model dominates across all tasks.</p>
+  </div>
+
+  <!-- Section 6: Key Findings -->
+  <h2 id="findings" class="sec-heading font-serif text-2xl font-semibold mb-8 relative">
+    <a href="#findings" class="heading-anchor absolute -left-6 text-black/20">#</a>
+    Key Findings
+  </h2>
+
+  <div class="space-y-12 mb-12">
+
+    <div>
+      <h3 class="font-semibold text-lg mb-3">1. Five Capability Dimensions</h3>
+      <p class="text-[16.5px] leading-[1.8] text-black/75 mb-4">We identify five orthogonal capability dimensions from the results: <strong>Coarse Manipulation</strong>, <strong>Precision Manipulation</strong>, <strong>Sequential Reasoning</strong>, <strong>Semantic Understanding</strong>, and <strong>Spatial Robustness</strong>. Each model dominates a different subset — no model excels at everything.</p>
+    </div>
+
+    <div>
+      <h3 class="font-semibold text-lg mb-3">2. VLA vs WAM: Complementary Strengths</h3>
+      <p class="text-[16.5px] leading-[1.8] text-black/75">VLA models excel at precision manipulation (put_glasses: 87/100) and semantic understanding (58.9 avg). DreamZero excels at coarse manipulation (pick_items: 97.8) and spatial robustness (-8% vs -57% on position shifts). Neither paradigm subsumes the other.</p>
+    </div>
+
+    <div>
+      <h3 class="font-semibold text-lg mb-3">3. The Semantic Gap Depends on Instruction Completeness</h3>
+      <p class="text-[16.5px] leading-[1.8] text-black/75">On semantic tasks where the language instruction fully specifies the objective ("put headphones into the basket"), DreamZero remains competitive (score: 66). But when the model must extract the action plan from visual context (read a color-sequence card, infer matching rules), DreamZero drops to 3–13.5 while VLA maintains 13–51.5. The gap is not about "semantic reasoning" in general — it's about whether the task goal is fully specified by language alone.</p>
+    </div>
+
+    <div>
+      <h3 class="font-semibold text-lg mb-3">4. Force-Sensitive Manipulation Is the Open Frontier</h3>
+      <p class="text-[16.5px] leading-[1.8] text-black/75">Tasks requiring force modulation — pouring, insertion, zipping — score below 30/100 for all models. The 56D action space includes motor currents specifically to enable research on this frontier. Current models barely use this signal.</p>
+    </div>
+
+    <div>
+      <h3 class="font-semibold text-lg mb-3">5. Multi-Task Unification Helps — With Trade-offs</h3>
+      <p class="text-[16.5px] leading-[1.8] text-black/75">OneModel outperforms Single overall (640.5 vs 626.3), with a +109% gain on semantic tasks. But it pays a -73% penalty on procedural tasks like press_button. Multi-task training amplifies cross-task transfer for semantic understanding but can interfere with task-specific procedural skills.</p>
+    </div>
+
+  </div>
+
+</main>
+<div class="max-w-5xl mx-auto px-6 mb-8">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <img src="figs/fig_capability_matrix.png" alt="Capability matrix" class="w-full rounded-lg"/>
+      <div class="text-center text-xs text-black/30 mt-2 font-mono">Five capability dimensions across three models</div>
+    </div>
+    <div>
+      <img src="figs/fig_trial_heatmap.png" alt="Trial heatmap" class="w-full rounded-lg"/>
+      <div class="text-center text-xs text-black/30 mt-2 font-mono">Per-trial score heatmap showing OOD degradation patterns</div>
+    </div>
+  </div>
+</div>
+<main class="max-w-3xl mx-auto px-6">
+
+  <div class="mb-20"></div>
+
+  <!-- Section 7: OOD Experiment -->
+  <h2 id="ood" class="sec-heading font-serif text-2xl font-semibold mb-6 relative">
+    <a href="#ood" class="heading-anchor absolute -left-6 text-black/20">#</a>
+    Beyond the Benchmark: What Happens Under Full OOD?
+  </h2>
+
+  <div class="space-y-5 text-[16.5px] leading-[1.8] text-black/75 mb-8">
+    <p>The main benchmark tests OOD within the training distribution's neighborhood. But what happens when <em>every object is completely novel</em>?</p>
+    <p>We ran a supplementary <strong>14-trial controlled experiment</strong> using 7 unseen fruits and 3 unseen plates — none appearing in any training trajectory. The results were striking:</p>
+  </div>
+
+  <div class="grid grid-cols-2 gap-8 mb-8">
+    <div class="text-center">
+      <div class="font-serif text-3xl font-bold text-vla stat-num">4<span class="text-lg text-black/30">/140</span></div>
+      <div class="text-sm text-black/50 mt-1"><span class="font-serif italic">π</span><sub>0.5</sub>-OneModel</div>
+    </div>
+    <div class="text-center">
+      <div class="font-serif text-3xl font-bold text-wam stat-num">34<span class="text-lg text-black/30">/140</span></div>
+      <div class="text-sm text-black/50 mt-1">DreamZero</div>
+    </div>
+  </div>
+
+  <div class="space-y-5 text-[16.5px] leading-[1.8] text-black/75 mb-8">
+    <p><strong>The VLA–WAM gap inverts under full OOD.</strong> In-distribution, VLA outperforms DreamZero on semantic tasks (58.9 vs 32.7). Under full OOD, DreamZero outperforms VLA ~8.5:1. The VLA model achieves exactly one grasp across 14 trials.</p>
+    <p>Even more surprising: DreamZero performs <em>better</em> with reasoning-style instructions ("the largest fruit", "the rightmost plate") than with explicit novel object names ("pineapple", "loquat"). In 3 of 4 controlled same-scene comparisons, descriptive cues outperform explicit names — suggesting that when objects are unfamiliar, relational descriptions are more actionable than novel identifiers.</p>
+    <p>This points to a fundamental architectural difference: VLA's VLM backbone relies on pattern matching against training data distributions, while DreamZero's video-diffusion backbone encodes physical priors that generalize more robustly to novel visual inputs.</p>
+  </div>
+
+  <div class="mb-20">
+    <a href="../maniparena-ood/" class="inline-flex items-center gap-2 text-sm font-medium text-black/60 hover:text-black underline underline-offset-4 transition-colors">
+      Full experiment details with trial-by-trial video comparisons &rarr;
+    </a>
+  </div>
+
+  <!-- Section 8: Competition -->
+  <h2 id="competition" class="sec-heading font-serif text-2xl font-semibold mb-6 relative">
+    <a href="#competition" class="heading-anchor absolute -left-6 text-black/20">#</a>
+    Join the Competition
+  </h2>
+
+  <div class="space-y-5 text-[16.5px] leading-[1.8] text-black/75 mb-8">
+    <p>ManipArena is the official competition of the <strong>CVPR 2026 Embodied AI Workshop</strong>. The rules are simple: build one model, expose one HTTP endpoint, we evaluate it on every task.</p>
+  </div>
+
+  <div class="mb-8">
+    <div class="font-mono text-[10px] uppercase tracking-widest text-black/35 mb-4">Prizes</div>
+    <div class="space-y-4 text-sm">
+      <div>
+        <div class="font-semibold mb-1">Preliminary Stage</div>
+        <div class="text-black/60">1st–3rd: $500 &middot; 4th–9th: $300 &middot; 10th–20th: $200</div>
+      </div>
+      <div>
+        <div class="font-semibold mb-1">Final Stage</div>
+        <div class="text-black/60">1st: $5,000 &middot; 2nd: $3,000 &middot; 3rd: $2,000</div>
+        <div class="text-black/60">Top 3 each receive 2 x 6-axis robotic arms + &yen;100,000 purchase voucher</div>
+      </div>
+      <div>
+        <div class="font-semibold mb-1">Academic Bonus</div>
+        <div class="text-black/60">$500 for publishing a paper with real-robot experiments on our platform</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-8">
+    <div class="font-mono text-[10px] uppercase tracking-widest text-black/35 mb-4">Timeline</div>
+    <div class="space-y-1.5 text-sm text-black/60">
+      <div class="flex gap-4"><span class="font-mono text-xs text-black/30 w-28">Mar 18</span> Registration opens + data access</div>
+      <div class="flex gap-4"><span class="font-mono text-xs text-black/30 w-28">Apr 30</span> Preliminary submission deadline</div>
+      <div class="flex gap-4"><span class="font-mono text-xs text-black/30 w-28">May 6–27</span> Final round evaluation</div>
+      <div class="flex gap-4"><span class="font-mono text-xs text-black/30 w-28">Jun 3–7</span> Awards at CVPR 2026, Seattle</div>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap gap-4 mb-20">
+    <a href="https://maniparena.x2robot.com" class="inline-block px-5 py-2.5 bg-black text-bg text-sm font-medium rounded hover:bg-black/80 transition-colors">Competition Website</a>
+    <a href="https://huggingface.co/datasets/ManipArena/maniparena-dataset" class="inline-block px-5 py-2.5 bg-black/10 text-sm font-medium rounded hover:bg-black/20 transition-colors">Download Dataset</a>
+    <a href="https://maniparena.x2robot.com/maniparena.pdf" class="inline-block px-5 py-2.5 bg-black/10 text-sm font-medium rounded hover:bg-black/20 transition-colors">Read the Paper</a>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="border-t border-warm">
+  <div class="max-w-3xl mx-auto flex flex-col md:flex-row justify-between items-baseline px-6 py-8 gap-4">
+    <span class="font-serif text-sm text-black/35">&copy; 2026 ManipArena &middot; CVPR 2026 Embodied AI Workshop</span>
+    <div class="flex gap-6 text-sm text-black/35">
+      <a href="https://maniparena.x2robot.com" class="hover:text-black transition-colors">Website</a>
+      <a href="https://maniparena.x2robot.com/maniparena.pdf" class="hover:text-black transition-colors">Paper</a>
+      <a href="https://huggingface.co/datasets/ManipArena/maniparena-dataset" class="hover:text-black transition-colors">Dataset</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

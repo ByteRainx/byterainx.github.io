@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Distribute Fruits — ManipArena</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        bg: '#EEECE4',
+        warm: '#E6E0CB',
+        vla: '#E15759',
+        wam: '#4E79A7',
+        success: '#5A9E6F',
+        partial: '#D4A843',
+        fail: '#B85450',
+      },
+      fontFamily: {
+        serif: ['"Source Serif 4"', 'Georgia', 'serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
+      },
+    },
+  },
+}
+</script>
+<style>
+  body { background: #EEECE4; }
+  .heading-anchor { opacity: 0; transition: opacity 0.15s; }
+  .group-heading:hover .heading-anchor { opacity: 1; }
+  .dot-9 { background: #5A9E6F; }
+  .dot-4 { background: #D4A843; }
+  .dot-0 { background: #B85450; }
+  .speed-btn { transition: all 0.15s; }
+  .speed-btn.active { background: #000; color: #EEECE4; }
+  /* Hide video controls by default, show on hover */
+  .vid-wrap video::-webkit-media-controls { opacity: 0; transition: opacity 0.2s; }
+  .vid-wrap:hover video::-webkit-media-controls { opacity: 1; }
+  .vid-wrap video { cursor: pointer; }
+</style>
+</head>
+
+<body class="text-black font-sans antialiased">
+
+<!-- Nav -->
+<nav class="sticky top-0 z-50 bg-bg/90 backdrop-blur-md border-b border-warm/60">
+  <div class="max-w-3xl mx-auto flex justify-between items-baseline px-6 py-4">
+    <a href="https://maniparena.x2robot.com" class="font-serif text-lg font-semibold tracking-tight">ManipArena</a>
+    <div class="flex gap-6 text-sm">
+      <a href="https://maniparena.x2robot.com" class="hover:underline underline-offset-4">/Home</a>
+      <a href="https://maniparena.x2robot.com/maniparena.pdf" class="hover:underline underline-offset-4">/Paper</a>
+      <a href="https://huggingface.co/datasets/ManipArena/maniparena-dataset" class="hover:underline underline-offset-4">/Dataset</a>
+    </div>
+  </div>
+</nav>
+
+<main class="max-w-3xl mx-auto px-6 pt-16 pb-24">
+
+  <!-- Title -->
+  <header class="mb-20">
+    <h1 class="font-serif text-4xl md:text-5xl font-semibold leading-[1.15] mb-6">
+      Can VLA and World Action Models Handle Unseen Objects?
+    </h1>
+    <p class="text-lg text-black/55 leading-relaxed mb-10">
+      A controlled supplementary experiment on ManipArena, testing <span class="font-serif italic">π</span><sub>0.5</sub>-OneModel and DreamZero on completely out-of-distribution objects across 4 levels of instruction complexity.
+    </p>
+    <div class="flex flex-wrap gap-x-8 gap-y-2 text-sm text-black/40 font-mono border-t border-warm pt-6">
+      <span>March 24, 2026</span>
+      <span>ManipArena Team</span>
+      <a href="https://maniparena.x2robot.com/maniparena.pdf" class="underline underline-offset-4 hover:text-black">Paper PDF</a>
+    </div>
+  </header>
+
+  <!-- Intro -->
+  <div class="space-y-5 text-[16.5px] leading-[1.8] mb-20">
+    <p>Our main benchmark evaluates models on tasks where training data is available. But how do these models behave when confronted with <strong>objects they have never seen</strong>?</p>
+    <p>We designed a 14-trial experiment using 7 novel fruits and 3 novel plates — none of which appear in any training trajectory. Two models were tested on identical trials: <span class="font-serif italic">π</span><sub>0.5</sub>-OneModel (VLA) and DreamZero (World Action Model). Each trial scores up to 10 points: <span class="font-mono text-sm">Grasp (4) + Place (5) + Retract (1)</span>.</p>
+  </div>
+
+  <!-- Experiment Design -->
+  <h2 id="design" class="group-heading font-serif text-2xl font-semibold mb-8 relative">
+    <a href="#design" class="heading-anchor absolute -left-6 text-black/20">#</a>
+    Experiment Design
+  </h2>
+
+  <p class="text-[16.5px] leading-[1.8] text-black/70 mb-8">Trials are organized into four groups of increasing reasoning difficulty. Groups B and C share identical scenes, as do Groups A and D — enabling controlled comparisons that isolate the effect of instruction type.</p>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-6 mb-20">
+    <div>
+      <div class="font-mono text-[10px] uppercase tracking-widest text-black/35 mb-1">Group A</div>
+      <div class="font-semibold text-sm mb-0.5">OOD Explicit</div>
+      <div class="text-xs text-black/45">T1–T5 · 1 fruit · explicit names</div>
+    </div>
+    <div>
+      <div class="font-mono text-[10px] uppercase tracking-widest text-black/35 mb-1">Group B</div>
+      <div class="font-semibold text-sm mb-0.5">Multi-Object Explicit</div>
+      <div class="text-xs text-black/45">T6–T8 · 3 fruits · explicit names</div>
+    </div>
+    <div>
+      <div class="font-mono text-[10px] uppercase tracking-widest text-black/35 mb-1">Group C</div>
+      <div class="font-semibold text-sm mb-0.5">Multi-Object Reasoning</div>
+      <div class="text-xs text-black/45">T9–T11 · 3 fruits · same scenes as B</div>
+    </div>
+    <div>
+      <div class="font-mono text-[10px] uppercase tracking-widest text-black/35 mb-1">Group D</div>
+      <div class="font-semibold text-sm mb-0.5">Plate Reasoning</div>
+      <div class="text-xs text-black/45">T12–T14 · 1 fruit · same scenes as A</div>
+    </div>
+  </div>
+
+  <!-- Video Section -->
+  <h2 id="demos" class="group-heading font-serif text-2xl font-semibold mb-6 relative">
+    <a href="#demos" class="heading-anchor absolute -left-6 text-black/20">#</a>
+    Trial Demonstrations
+  </h2>
+
+  <!-- Speed control (sticky) -->
+  <div class="sticky top-[57px] z-40 bg-bg/90 backdrop-blur-md py-3 -mx-6 px-6 mb-6 flex items-center gap-3 border-b border-warm/40">
+    <span class="text-xs text-black/40 font-mono uppercase tracking-wider">Speed</span>
+    <div class="flex gap-1">
+      <button class="speed-btn px-3 py-1 rounded text-sm font-mono" onclick="setSpeed(1)">1x</button>
+      <button class="speed-btn px-3 py-1 rounded text-sm font-mono" onclick="setSpeed(2)">2x</button>
+      <button class="speed-btn active px-3 py-1 rounded text-sm font-mono" onclick="setSpeed(4)">4x</button>
+      <button class="speed-btn px-3 py-1 rounded text-sm font-mono" onclick="setSpeed(6)">6x</button>
+      <button class="speed-btn px-3 py-1 rounded text-sm font-mono" onclick="setSpeed(8)">8x</button>
+    </div>
+    <div class="ml-auto text-xs text-black/25 font-mono flex gap-6">
+      <span><span class="font-serif italic">π</span><sub>0.5</sub> (left)</span>
+      <span>DreamZero (right)</span>
+    </div>
+  </div>
+
+  <!-- Video Gallery — break out for full width -->
+</main>
+<div class="max-w-[1800px] mx-auto px-8">
+  <div id="video-gallery" class="mb-20"></div>
+</div>
+<main class="max-w-3xl mx-auto px-6">
+
+  <!-- Results -->
+  <h2 id="results" class="group-heading font-serif text-2xl font-semibold mb-6 relative">
+    <a href="#results" class="heading-anchor absolute -left-6 text-black/20">#</a>
+    Results
+  </h2>
+
+  <div class="mb-6 text-sm text-black/40 flex gap-5">
+    <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full dot-9"></span> 9–10</span>
+    <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full dot-4"></span> 4</span>
+    <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full dot-0"></span> 0</span>
+    <span class="ml-auto text-black/25 font-mono text-xs"><span class="font-serif italic">π</span><sub>0.5</sub> &nbsp; DZ</span>
+  </div>
+
+  <div class="space-y-8 mb-16 text-sm">
+    <div>
+      <div class="font-mono text-[10px] uppercase tracking-widest text-black/35 mb-3">Group A — OOD Explicit</div>
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-3"><span class="font-mono text-xs text-black/30 w-6">T1</span><span class="flex-1 text-black/60">pineapple → purple disc</span><span class="w-8 text-center font-bold text-partial">4</span><span class="w-8 text-center font-bold text-partial">4</span></div>
+        <div class="flex items-center gap-3"><span class="font-mono text-xs text-black/30 w-6">T2</span><span class="flex-1 text-black/60">green pear → gray plate</span><span class="w-8 text-center font-bold text-fail">0</span><span class="w-8 text-center font-bold text-success">9</span></div>
+        <div class="flex items-center gap-3"><span class="font-mono text-xs text-black/30 w-6">T3</span><span class="flex-1 text-black/60">peach → pink basin</span><span class="w-8 text-center font-bold text-fail">0</span><span class="w-8 text-center font-bold text-fail">0</span></div>
+        <div class="flex items-center gap-3"><span class="font-mono text-xs text-black/30 w-6">T4</span><span class="flex-1 text-black/60">strawberry → gray plate</span><span class="w-8 text-center font-bold text-fail">0</span><span class="w-8 text-center font-bold text-fail">0</span></div>
+        <div class="flex items-center gap-3"><span class="font-mono text-xs text-black/30 w-6">T5</span><span class="flex-1 text-black/60">loquat → purple disc</span><span class="w-8 text-center font-bold text-fail">0</span><span class="w-8 text-center font-bold text-fail">0</span></div>
+      </div>
+      <div class="flex items-center gap-3 mt-2 pt-2 border-t border-warm/50 text-black/40"><span class="w-6"></span><span class="flex-1 font-mono text-[10px] uppercase">Avg</span><span class="w-8 text-center font-bold text-vla text-xs">0.8</span><span class="w-8 text-center font-bold text-wam text-xs">2.6</span></div>
+    </div>
+
+    <div>
+      <div class="font-mono text-[10px] uppercase tracking-widest text-black/35 mb-3">Group B — Multi-Object Explicit</div>
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-3"><span class="font-mono text-xs text-black/30 w-6">T6</span><span class="flex-1 text-black/60">strawberry → purple disc</span><span class="w-8 text-center font-bold text-fail">0</span><span class="w-8 text-center font-bold text-partial">4</span></div>
+        <div class="flex items-center gap-3"><span class="font-mono text-xs text-black/30 w-6">T7</span><span class="flex-1 text-black/60">loquat → pink basin</span><span class="w-8 text-center font-bold text-fail">0</span><span class="w-8 text-center font-bold text-fail">0</span></div>
+        <div class="flex items-center gap-3"><span class="font-mono text-xs text-black/30 w-6">T8</span><span class="flex-1 text-black/60">green pear → gray plate</span><span class="w-8 text-center font-bold text-fail">0</span><span class="w-8 text-center font-bold text-fail">0</span></div>
+      </div>
+      <div class="flex items-center gap-3 mt-2 pt-2 border-t border-warm/50 text-black/40"><span class="w-6"></span><span class="flex-1 font-mono text-[10px] uppercase">Avg</span><span class="w-8 text-center font-bold text-vla text-xs">0.0</span><span class="w-8 text-center font-bold text-wam text-xs">1.3</span></div>
+    </div>
+
+    <div>
+      <div class="font-mono text-[10px] uppercase tracking-widest text-black/35 mb-3">Group C — Multi-Object Reasoning</div>
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-3"><span class="font-mono text-xs text-black/30 w-6">T9</span><span class="flex-1 text-black/60"><em>smallest fruit</em> → purple disc</span><span class="w-8 text-center font-bold text-fail">0</span><span class="w-8 text-center font-bold text-fail">0</span></div>
+        <div class="flex items-center gap-3"><span class="font-mono text-xs text-black/30 w-6">T10</span><span class="flex-1 text-black/60"><em>green fruit</em> → pink basin</span><span class="w-8 text-center font-bold text-fail">0</span><span class="w-8 text-center font-bold text-fail">0</span></div>
+        <div class="flex items-center gap-3"><span class="font-mono text-xs text-black/30 w-6">T11</span><span class="flex-1 text-black/60"><em>largest fruit</em> → gray plate</span><span class="w-8 text-center font-bold text-fail">0</span><span class="w-8 text-center font-bold text-success">9</span></div>
+      </div>
+      <div class="flex items-center gap-3 mt-2 pt-2 border-t border-warm/50 text-black/40"><span class="w-6"></span><span class="flex-1 font-mono text-[10px] uppercase">Avg</span><span class="w-8 text-center font-bold text-vla text-xs">0.0</span><span class="w-8 text-center font-bold text-wam text-xs">3.0</span></div>
+    </div>
+
+    <div>
+      <div class="font-mono text-[10px] uppercase tracking-widest text-black/35 mb-3">Group D — Plate Reasoning</div>
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-3"><span class="font-mono text-xs text-black/30 w-6">T12</span><span class="flex-1 text-black/60">fruit → <em>rightmost plate</em></span><span class="w-8 text-center font-bold text-fail">0</span><span class="w-8 text-center font-bold text-partial">4</span></div>
+        <div class="flex items-center gap-3"><span class="font-mono text-xs text-black/30 w-6">T13</span><span class="flex-1 text-black/60">fruit → <em>transparent plate</em></span><span class="w-8 text-center font-bold text-fail">0</span><span class="w-8 text-center font-bold text-partial">4</span></div>
+        <div class="flex items-center gap-3"><span class="font-mono text-xs text-black/30 w-6">T14</span><span class="flex-1 text-black/60">fruit → <em>largest plate</em></span><span class="w-8 text-center font-bold text-fail">0</span><span class="w-8 text-center font-bold text-fail">0</span></div>
+      </div>
+      <div class="flex items-center gap-3 mt-2 pt-2 border-t border-warm/50 text-black/40"><span class="w-6"></span><span class="flex-1 font-mono text-[10px] uppercase">Avg</span><span class="w-8 text-center font-bold text-vla text-xs">0.0</span><span class="w-8 text-center font-bold text-wam text-xs">2.7</span></div>
+    </div>
+  </div>
+
+  <!-- Findings -->
+  <h2 id="findings" class="group-heading font-serif text-2xl font-semibold mb-8 relative">
+    <a href="#findings" class="heading-anchor absolute -left-6 text-black/20">#</a>
+    Key Findings
+  </h2>
+
+  <div class="space-y-8 mb-20 text-[16.5px] leading-[1.8]">
+    <p class="text-black/70"><strong>1. Both models struggle severely with OOD objects.</strong> <span class="font-serif italic">π</span><sub>0.5</sub> scores 4/140 (2.9%), DreamZero scores 34/140 (24.3%) — far below in-distribution baselines of 40–70+.</p>
+
+    <p class="text-black/70"><strong>2. VLA collapses entirely.</strong> <span class="font-serif italic">π</span><sub>0.5</sub> achieves exactly one grasp across 14 trials. It scores 0 on all remaining 13 trials, regardless of instruction type.</p>
+
+    <p class="text-black/70"><strong>3. DreamZero shows a surprising reasoning-task advantage.</strong> Average on explicit instructions (A+B): <span class="font-mono text-sm">1.75</span>. Average on reasoning instructions (C+D): <span class="font-mono text-sm">2.83</span>. In 3 of 4 controlled same-scene pairs, DreamZero performs better with descriptive cues ("rightmost", "largest") than novel object names it has never encountered.</p>
+
+    <p class="text-black/70"><strong>4. The VLA–WAM gap inverts under OOD.</strong> In-distribution, <span class="font-serif italic">π</span><sub>0.5</sub> outperforms DreamZero on semantic tasks (58.9 vs 32.7). Under full OOD, DreamZero outperforms <span class="font-serif italic">π</span><sub>0.5</sub> ~8.5:1 (34 vs 4). VLA's semantic advantage may rely on pattern matching against training data, while DreamZero's video-prediction backbone provides more robust generalization to novel visual inputs.</p>
+  </div>
+
+  <!-- Methodology -->
+  <h2 id="methodology" class="group-heading font-serif text-2xl font-semibold mb-6 relative">
+    <a href="#methodology" class="heading-anchor absolute -left-6 text-black/20">#</a>
+    Methodology
+  </h2>
+
+  <p class="text-[16.5px] leading-[1.8] text-black/70 mb-20">All 7 fruits and 3 plates are completely unseen during training. Scene configurations are also novel. Both models use the same one-model-for-all-tasks checkpoint. Scoring follows the ManipArena rubric with a 180-second timeout per trial.</p>
+
+</main>
+
+<footer class="border-t border-warm">
+  <div class="max-w-3xl mx-auto flex flex-col md:flex-row justify-between items-baseline px-6 py-8 gap-4">
+    <span class="font-serif text-sm text-black/35">&copy; 2026 ManipArena</span>
+    <div class="flex gap-6 text-sm text-black/35">
+      <a href="https://maniparena.x2robot.com" class="hover:text-black transition-colors">Website</a>
+      <a href="https://maniparena.x2robot.com/maniparena.pdf" class="hover:text-black transition-colors">Paper</a>
+      <a href="https://huggingface.co/datasets/ManipArena/maniparena-dataset" class="hover:text-black transition-colors">Dataset</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const trials = {
+  1:  {g:'A', instr:'Place the <strong>pineapple</strong> on the <strong>purple round disc</strong>', pi:4, dz:4, note:'Both grasp only, fail to place.'},
+  2:  {g:'A', instr:'Place the <strong>green pear</strong> on the <strong>gray transparent plate</strong>', pi:0, dz:9, note:'DreamZero grasps and places successfully.'},
+  3:  {g:'A', instr:'Place the <strong>peach</strong> on the <strong>pink large basin</strong>', pi:0, dz:0, note:'Same scene as T12 — compare with "rightmost plate".'},
+  4:  {g:'A', instr:'Place the <strong>strawberry</strong> on the <strong>gray transparent plate</strong>', pi:0, dz:0, note:'Same scene as T13 — compare with "transparent plate".'},
+  5:  {g:'A', instr:'Place the <strong>loquat</strong> on the <strong>purple round disc</strong>', pi:0, dz:0},
+  6:  {g:'B', instr:'Place the <strong>strawberry</strong> on the <strong>purple disc</strong> <span class="text-black/30">(3 fruits)</span>', pi:0, dz:4, note:'Same scene as T9. DZ grasps here but fails with "smallest fruit".'},
+  7:  {g:'B', instr:'Place the <strong>loquat</strong> on the <strong>pink basin</strong> <span class="text-black/30">(3 fruits)</span>', pi:0, dz:0},
+  8:  {g:'B', instr:'Place the <strong>green pear</strong> on the <strong>gray plate</strong> <span class="text-black/30">(3 fruits)</span>', pi:0, dz:0, note:'Same scene as T11. DZ fails here but scores 9 with "largest fruit".'},
+  9:  {g:'C', instr:'Place the <em>smallest fruit</em> on the purple disc', pi:0, dz:0, note:'vs T6 (same scene): DZ drops 4→0.'},
+  10: {g:'C', instr:'Place the <em>green fruit</em> on the pink basin', pi:0, dz:0},
+  11: {g:'C', instr:'Place the <em>largest fruit</em> on the gray plate', pi:0, dz:9, note:'vs T8 (same scene): DZ rises 0→9.'},
+  12: {g:'D', instr:'Place the fruit on the <em>rightmost plate</em>', pi:0, dz:4, note:'vs T3 (same scene): DZ rises 0→4.'},
+  13: {g:'D', instr:'Place the fruit on the <em>transparent plate</em>', pi:0, dz:4, note:'vs T4 (same scene): DZ rises 0→4.'},
+  14: {g:'D', instr:'Place the fruit on the <em>largest plate</em>', pi:0, dz:0},
+};
+
+// Group definitions with descriptions
+const groups = [
+  {
+    id: 'A', name: 'OOD Explicit Instructions',
+    trials: [1,2,3,4,5],
+    desc: 'Single fruit on the table with 3 plates. The instruction explicitly names both the fruit and the target plate. Tests whether models can follow clear instructions when all objects are completely unseen during training.',
+  },
+  {
+    id: 'B', name: 'Multi-Object Explicit Instructions',
+    trials: [6,7,8],
+    desc: 'Three fruits on the table with 3 plates. The instruction explicitly names the target fruit and plate. Tests whether models can discriminate and select the correct object among multiple unseen distractors.',
+  },
+  {
+    id: 'C', name: 'Multi-Object Reasoning',
+    trials: [9,10,11],
+    desc: 'Same scenes as Group B, but the instruction uses descriptive reasoning ("smallest", "green", "largest") instead of explicit names. Tests whether models can perform semantic reasoning over novel objects. Controlled comparison with B isolates the effect of instruction type.',
+  },
+  {
+    id: 'D', name: 'Plate Reasoning',
+    trials: [12,13,14],
+    desc: 'Same scenes as Group A subset, but the plate is described by spatial position ("rightmost"), material ("transparent"), or attribute ("largest") instead of its name. Tests whether models can ground descriptive references to novel containers. Controlled comparison with A isolates the effect of plate description.',
+  },
+];
+
+function scorePill(s) {
+  if (s >= 9) return `<span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-bold" style="background:#e8f5e9;color:#2e7d32">${s}</span>`;
+  if (s >= 4) return `<span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-bold" style="background:#fff8e1;color:#f57f17">${s}</span>`;
+  return `<span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-bold" style="background:#fce4ec;color:#c62828">0</span>`;
+}
+
+function renderCell(n) {
+  const t = trials[n];
+  return `
+    <div>
+      <div class="flex items-baseline gap-2 mb-3">
+        <span class="font-mono text-xs uppercase tracking-wider text-black/30">${t.g}</span>
+        <span class="font-mono text-sm font-bold text-black/60">T${n}</span>
+        <span class="text-sm text-black/60">${t.instr}</span>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <div class="vid-wrap aspect-video bg-black/5 rounded overflow-hidden">
+            <video class="trial-video w-full h-full object-cover" controls autoplay loop muted playsinline>
+              <source src="videos/pi05_t${n}.mp4" type="video/mp4"/>
+            </video>
+          </div>
+          <div class="mt-1 flex items-center justify-between px-0.5">
+            <span class="text-[10px] text-black/30 font-mono"><span class="font-serif italic">π</span><sub>0.5</sub></span>
+            ${scorePill(t.pi)}
+          </div>
+        </div>
+        <div>
+          <div class="vid-wrap aspect-video bg-black/5 rounded overflow-hidden">
+            <video class="trial-video w-full h-full object-cover" controls autoplay loop muted playsinline>
+              <source src="videos/dz_t${n}.mp4" type="video/mp4"/>
+            </video>
+          </div>
+          <div class="mt-1 flex items-center justify-between px-0.5">
+            <span class="text-[10px] text-black/30 font-mono">DZ</span>
+            ${scorePill(t.dz)}
+          </div>
+        </div>
+      </div>
+      ${t.note ? `<div class="text-xs text-black/35 mt-2 italic">${t.note}</div>` : ''}
+    </div>`;
+}
+
+function renderGallery() {
+  const gallery = document.getElementById('video-gallery');
+  let html = '';
+
+  for (const group of groups) {
+    // Group header
+    html += `<div class="mb-6 mt-4">`;
+    html += `<div class="flex items-baseline gap-3 mb-2">`;
+    html += `<span class="font-mono text-sm font-bold text-black/50">Group ${group.id}</span>`;
+    html += `<span class="font-serif text-xl font-semibold">${group.name}</span>`;
+    html += `</div>`;
+    html += `<p class="text-sm text-black/50 leading-relaxed max-w-3xl">${group.desc}</p>`;
+    html += `</div>`;
+
+    // Trials in rows of 2
+    const t = group.trials;
+    for (let i = 0; i < t.length; i += 2) {
+      html += `<div class="grid grid-cols-2 gap-x-24 gap-y-0 mb-10">`;
+      html += renderCell(t[i]);
+      if (t[i+1]) html += renderCell(t[i+1]);
+      html += `</div>`;
+    }
+
+    // Separator between groups
+    html += `<div class="border-t border-warm/60 mb-16 mt-6"></div>`;
+  }
+
+  gallery.innerHTML = html;
+  document.querySelectorAll('.trial-video').forEach(v => { v.playbackRate = 4; });
+}
+
+function setSpeed(rate) {
+  document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.trial-video').forEach(v => { v.playbackRate = rate; });
+}
+
+renderGallery();
+</script>
+
+</body>
+</html>
