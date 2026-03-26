@@ -154,13 +154,6 @@ tailwind.config = {
     <p>Each task follows a <strong>10-trial stratified evaluation</strong> protocol. Trials T1–T4 are in-distribution. Trials T5–T8 introduce visual shifts (new positions, orientations). Trials T9–T10 test true OOD — objects the model has never seen during training. This layered design lets us chart a model's generalization curve, not just a single pass/fail number.</p>
   </div>
 
-</main>
-<div class="max-w-5xl mx-auto px-6 mb-8">
-  <img src="figs/fig_ood_degradation.png" alt="OOD degradation curves" class="w-full rounded-lg"/>
-  <div class="text-center text-xs text-black/30 mt-3 font-mono">Performance degradation under increasing OOD levels</div>
-</div>
-<main class="max-w-3xl mx-auto px-6">
-
   <div class="text-[16.5px] leading-[1.8] text-black/75 mb-20">
     <p>All three models degrade under distribution shift, but at very different rates. DreamZero shows remarkable spatial robustness (-8% on position shifts), while the VLA models drop much more steeply (-57% for Single, -95% for OneModel under compound OOD).</p>
   </div>
@@ -267,20 +260,57 @@ tailwind.config = {
 
 </main>
 <div class="max-w-5xl mx-auto px-6 mb-8">
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div>
-      <img src="figs/fig_capability_matrix.png" alt="Capability matrix" class="w-full rounded-lg"/>
-      <div class="text-center text-xs text-black/30 mt-2 font-mono">Five capability dimensions across three models</div>
-    </div>
-    <div>
-      <img src="figs/fig_trial_heatmap.png" alt="Trial heatmap" class="w-full rounded-lg"/>
-      <div class="text-center text-xs text-black/30 mt-2 font-mono">Per-trial score heatmap showing OOD degradation patterns</div>
-    </div>
-  </div>
+  <img src="figs/fig_capability_matrix.png" alt="Capability matrix" class="w-full rounded-lg"/>
+  <div class="text-center text-xs text-black/30 mt-3 font-mono">Five capability dimensions across three models</div>
 </div>
 <main class="max-w-3xl mx-auto px-6">
 
-  <div class="mb-20"></div>
+  <!-- Score Table from Paper -->
+  <div class="mt-12 mb-20 overflow-x-auto">
+    <div class="font-mono text-[10px] uppercase tracking-widest text-black/35 mb-4">Baseline Evaluation — 15 Tabletop Tasks</div>
+    <table class="w-full text-sm" style="border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom: 2px solid rgba(0,0,0,0.1);">
+          <th class="py-2 px-2 text-left text-black/40 font-mono text-[10px] uppercase">Category</th>
+          <th class="py-2 px-2 text-left text-black/40 font-mono text-[10px] uppercase">Task</th>
+          <th class="py-2 px-2 text-center text-black/40 font-mono text-[10px] uppercase" colspan="2"><span class="font-serif italic">π</span><sub>0.5</sub>-Single</th>
+          <th class="py-2 px-2 text-center text-black/40 font-mono text-[10px] uppercase" colspan="2"><span class="font-serif italic">π</span><sub>0.5</sub>-OneModel</th>
+          <th class="py-2 px-2 text-center text-black/40 font-mono text-[10px] uppercase" colspan="2">DreamZero</th>
+        </tr>
+        <tr style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+          <th></th><th></th>
+          <th class="py-1 px-2 text-center text-black/30 text-[10px]">Score</th><th class="py-1 px-2 text-center text-black/30 text-[10px]">SR</th>
+          <th class="py-1 px-2 text-center text-black/30 text-[10px]">Score</th><th class="py-1 px-2 text-center text-black/30 text-[10px]">SR</th>
+          <th class="py-1 px-2 text-center text-black/30 text-[10px]">Score</th><th class="py-1 px-2 text-center text-black/30 text-[10px]">SR</th>
+        </tr>
+      </thead>
+      <tbody class="text-black/70">
+        <tr style="border-bottom:1px solid rgba(0,0,0,0.04);"><td class="py-1.5 px-2 text-black/30 text-xs" rowspan="10">Exec</td><td class="py-1.5 px-2">arrange_cup</td><td class="py-1.5 px-2 text-center">18</td><td class="py-1.5 px-2 text-center text-black/30">0%</td><td class="py-1.5 px-2 text-center">14</td><td class="py-1.5 px-2 text-center text-black/30">0%</td><td class="py-1.5 px-2 text-center font-bold">25</td><td class="py-1.5 px-2 text-center text-black/30">0%</td></tr>
+        <tr style="border-bottom:1px solid rgba(0,0,0,0.04);"><td class="py-1.5 px-2">put_spoon</td><td class="py-1.5 px-2 text-center">52</td><td class="py-1.5 px-2 text-center text-black/30">20%</td><td class="py-1.5 px-2 text-center">43</td><td class="py-1.5 px-2 text-center text-black/30">10%</td><td class="py-1.5 px-2 text-center font-bold">54</td><td class="py-1.5 px-2 text-center text-black/30">20%</td></tr>
+        <tr style="border-bottom:1px solid rgba(0,0,0,0.04);"><td class="py-1.5 px-2">put_glasses</td><td class="py-1.5 px-2 text-center">80</td><td class="py-1.5 px-2 text-center text-black/30">60%</td><td class="py-1.5 px-2 text-center font-bold">87</td><td class="py-1.5 px-2 text-center text-black/30">70%</td><td class="py-1.5 px-2 text-center">37</td><td class="py-1.5 px-2 text-center text-black/30">0%</td></tr>
+        <tr style="border-bottom:1px solid rgba(0,0,0,0.04);"><td class="py-1.5 px-2">put_ring</td><td class="py-1.5 px-2 text-center">41</td><td class="py-1.5 px-2 text-center text-black/30">20%</td><td class="py-1.5 px-2 text-center font-bold">60</td><td class="py-1.5 px-2 text-center text-black/30">20%</td><td class="py-1.5 px-2 text-center">27</td><td class="py-1.5 px-2 text-center text-black/30">0%</td></tr>
+        <tr style="border-bottom:1px solid rgba(0,0,0,0.04);"><td class="py-1.5 px-2">put_items_drawer</td><td class="py-1.5 px-2 text-center font-bold">34</td><td class="py-1.5 px-2 text-center text-black/30">0%</td><td class="py-1.5 px-2 text-center">7</td><td class="py-1.5 px-2 text-center text-black/30">0%</td><td class="py-1.5 px-2 text-center">7</td><td class="py-1.5 px-2 text-center text-black/30">0%</td></tr>
+        <tr style="border-bottom:1px solid rgba(0,0,0,0.04);"><td class="py-1.5 px-2">pick_items_basket</td><td class="py-1.5 px-2 text-center">46.8</td><td class="py-1.5 px-2 text-center text-black/30">20%</td><td class="py-1.5 px-2 text-center">37</td><td class="py-1.5 px-2 text-center text-black/30">10%</td><td class="py-1.5 px-2 text-center font-bold">97.8</td><td class="py-1.5 px-2 text-center text-black/30">90%</td></tr>
+        <tr style="border-bottom:1px solid rgba(0,0,0,0.04);"><td class="py-1.5 px-2">pour_water</td><td class="py-1.5 px-2 text-center">8</td><td class="py-1.5 px-2 text-center text-black/30">0%</td><td class="py-1.5 px-2 text-center font-bold">19</td><td class="py-1.5 px-2 text-center text-black/30">0%</td><td class="py-1.5 px-2 text-center">12</td><td class="py-1.5 px-2 text-center text-black/30">0%</td></tr>
+        <tr style="border-bottom:1px solid rgba(0,0,0,0.04);"><td class="py-1.5 px-2">insert_wireline</td><td class="py-1.5 px-2 text-center font-bold">24</td><td class="py-1.5 px-2 text-center text-black/30">0%</td><td class="py-1.5 px-2 text-center">21</td><td class="py-1.5 px-2 text-center text-black/30">0%</td><td class="py-1.5 px-2 text-center font-bold">24</td><td class="py-1.5 px-2 text-center text-black/30">0%</td></tr>
+        <tr style="border-bottom:1px solid rgba(0,0,0,0.04);"><td class="py-1.5 px-2">put_stationery</td><td class="py-1.5 px-2 text-center">21.5</td><td class="py-1.5 px-2 text-center text-black/30">0%</td><td class="py-1.5 px-2 text-center">16</td><td class="py-1.5 px-2 text-center text-black/30">0%</td><td class="py-1.5 px-2 text-center font-bold">26</td><td class="py-1.5 px-2 text-center text-black/30">0%</td></tr>
+        <tr style="border-bottom:2px solid rgba(0,0,0,0.08);"><td class="py-1.5 px-2">put_blocks</td><td class="py-1.5 px-2 text-center font-bold">48</td><td class="py-1.5 px-2 text-center text-black/30">30%</td><td class="py-1.5 px-2 text-center">42</td><td class="py-1.5 px-2 text-center text-black/30">30%</td><td class="py-1.5 px-2 text-center">27</td><td class="py-1.5 px-2 text-center text-black/30">0%</td></tr>
+        <tr style="border-bottom:1px solid rgba(0,0,0,0.04);"><td class="py-1.5 px-2 text-black/30 text-xs" rowspan="5">Sem</td><td class="py-1.5 px-2">sort_headphone</td><td class="py-1.5 px-2 text-center">35</td><td class="py-1.5 px-2 text-center text-black/30">20%</td><td class="py-1.5 px-2 text-center font-bold">73</td><td class="py-1.5 px-2 text-center text-black/30">70%</td><td class="py-1.5 px-2 text-center">66</td><td class="py-1.5 px-2 text-center text-black/30">60%</td></tr>
+        <tr style="border-bottom:1px solid rgba(0,0,0,0.04);"><td class="py-1.5 px-2">classify_items</td><td class="py-1.5 px-2 text-center">59</td><td class="py-1.5 px-2 text-center text-black/30">20%</td><td class="py-1.5 px-2 text-center font-bold">63</td><td class="py-1.5 px-2 text-center text-black/30">40%</td><td class="py-1.5 px-2 text-center">36</td><td class="py-1.5 px-2 text-center text-black/30">0%</td></tr>
+        <tr style="border-bottom:1px solid rgba(0,0,0,0.04);"><td class="py-1.5 px-2">press_button</td><td class="py-1.5 px-2 text-center font-bold">48</td><td class="py-1.5 px-2 text-center text-black/30">20%</td><td class="py-1.5 px-2 text-center">13</td><td class="py-1.5 px-2 text-center text-black/30">0%</td><td class="py-1.5 px-2 text-center">3</td><td class="py-1.5 px-2 text-center text-black/30">0%</td></tr>
+        <tr style="border-bottom:1px solid rgba(0,0,0,0.04);"><td class="py-1.5 px-2">pair_up_items</td><td class="py-1.5 px-2 text-center">21</td><td class="py-1.5 px-2 text-center text-black/30">0%</td><td class="py-1.5 px-2 text-center font-bold">51.5</td><td class="py-1.5 px-2 text-center text-black/30">30%</td><td class="py-1.5 px-2 text-center">13.5</td><td class="py-1.5 px-2 text-center text-black/30">0%</td></tr>
+        <tr style="border-bottom:2px solid rgba(0,0,0,0.08);"><td class="py-1.5 px-2">pick_fruits</td><td class="py-1.5 px-2 text-center">90</td><td class="py-1.5 px-2 text-center text-black/30">80%</td><td class="py-1.5 px-2 text-center font-bold">94</td><td class="py-1.5 px-2 text-center text-black/30">80%</td><td class="py-1.5 px-2 text-center">45</td><td class="py-1.5 px-2 text-center text-black/30">0%</td></tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td class="py-2 px-2 font-semibold" colspan="2">Total (/1,500)</td>
+          <td class="py-2 px-2 text-center" colspan="2">626.3</td>
+          <td class="py-2 px-2 text-center font-bold" colspan="2">640.5</td>
+          <td class="py-2 px-2 text-center" colspan="2">500.3</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
 
   <!-- Section 7: OOD Experiment -->
   <h2 id="ood" class="sec-heading font-serif text-2xl font-semibold mb-6 relative">
