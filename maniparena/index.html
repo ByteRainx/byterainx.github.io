@@ -128,7 +128,7 @@ tailwind.config = {
 
 </main>
 <div class="max-w-5xl mx-auto px-6 mb-16">
-  <img src="figs/fig_task_overview_grid_v2.png" alt="ManipArena 20 task overview" class="w-full rounded-lg"/>
+  <img src="figs/fig_task_overview_grid.png" alt="ManipArena 20 task overview" class="w-full rounded-lg"/>
   <div class="text-center text-xs text-black/30 mt-3 font-mono">All 20 ManipArena tasks organized by category</div>
 </div>
 <main class="max-w-3xl mx-auto px-6">
@@ -146,21 +146,13 @@ tailwind.config = {
 
 </main>
 <div class="max-w-5xl mx-auto px-6 mb-8">
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div>
-      <img src="figs/robot_setup_annotated_v3.png" alt="Robot setup" class="w-full rounded-lg"/>
-      <div class="text-center text-xs text-black/30 mt-2 font-mono">Controlled evaluation environment</div>
-    </div>
-    <div>
-      <img src="figs/fig_ood_degradation.png" alt="OOD degradation curves" class="w-full rounded-lg"/>
-      <div class="text-center text-xs text-black/30 mt-2 font-mono">Performance degradation under increasing OOD</div>
-    </div>
-  </div>
+  <img src="figs/fig_ood_degradation.png" alt="OOD degradation curves" class="w-full rounded-lg"/>
+  <div class="text-center text-xs text-black/30 mt-3 font-mono">Performance degradation under increasing OOD levels</div>
 </div>
 <main class="max-w-3xl mx-auto px-6">
 
   <div class="text-[16.5px] leading-[1.8] text-black/75 mb-20">
-    <p>The OOD degradation curves above tell a clear story: all three models degrade under distribution shift, but at very different rates. DreamZero shows remarkable spatial robustness (-8% on position shifts), while the VLA models drop much more steeply (-57% for Single).</p>
+    <p>All three models degrade under distribution shift, but at very different rates. DreamZero shows remarkable spatial robustness (-8% on position shifts), while the VLA models drop much more steeply (-57% for Single, -95% for OneModel under compound OOD).</p>
   </div>
 
   <!-- Section 4: Dataset -->
@@ -191,13 +183,6 @@ tailwind.config = {
       <div class="text-xs text-black/40">Motor currents</div>
     </div>
   </div>
-
-</main>
-<div class="max-w-5xl mx-auto px-6 mb-20">
-  <img src="figs/fig15_dataset_overview_v6.png" alt="Dataset overview" class="w-full rounded-lg"/>
-  <div class="text-center text-xs text-black/30 mt-3 font-mono">Per-task trajectory counts, episode durations, and frame counts</div>
-</div>
-<main class="max-w-3xl mx-auto px-6">
 
   <div class="text-[16.5px] leading-[1.8] text-black/75 mb-20">
     <p>The 56-dimensional state space goes far beyond standard joint positions. Motor currents enable the study of <strong>contact-aware control</strong> — a capability frontier where all current models score below 30/100. Joint velocities provide a direct signal for dynamic manipulation behaviors.</p>
@@ -230,13 +215,6 @@ tailwind.config = {
       <div class="text-xs text-black/50">Video diffusion backbone (Wan 14B). 500.3/1500</div>
     </div>
   </div>
-
-</main>
-<div class="max-w-5xl mx-auto px-6 mb-8">
-  <img src="figs/fig_baseline_scores.png" alt="Baseline scores" class="w-full rounded-lg"/>
-  <div class="text-center text-xs text-black/30 mt-3 font-mono">Per-task scores for all three baseline models</div>
-</div>
-<main class="max-w-3xl mx-auto px-6">
 
   <div class="text-[16.5px] leading-[1.8] text-black/75 mb-20">
     <p>The best model achieves only <strong>42.7%</strong> — the benchmark is far from saturated. Four tasks remain below 30/100 for all models, and no single model dominates across all tasks.</p>
