@@ -32,6 +32,16 @@ tailwind.config = {
   .heading-anchor { opacity: 0; transition: opacity 0.15s; }
   .sec-heading:hover .heading-anchor { opacity: 1; }
   .stat-num { font-variant-numeric: tabular-nums; }
+  .group-tab { cursor: pointer; transition: all 0.15s; border-bottom: 2px solid transparent; }
+  .group-tab:hover { color: #000; }
+  .group-tab.active { color: #000; border-bottom-color: #000; }
+  .group-panel { display: none; }
+  .group-panel.active { display: block; }
+  .speed-btn { transition: all 0.15s; }
+  .speed-btn.active { background: #000; color: #EEECE4; }
+  .vid-wrap video::-webkit-media-controls { opacity: 0; transition: opacity 0.2s; }
+  .vid-wrap:hover video::-webkit-media-controls { opacity: 1; }
+  .vid-wrap video { cursor: pointer; }
 </style>
 </head>
 
@@ -275,36 +285,44 @@ tailwind.config = {
   <!-- Section 7: OOD Experiment -->
   <h2 id="ood" class="sec-heading font-serif text-2xl font-semibold mb-6 relative">
     <a href="#ood" class="heading-anchor absolute -left-6 text-black/20">#</a>
-    Beyond the Benchmark: What Happens Under Full OOD?
+    Supplementary: Full OOD Experiment
   </h2>
 
   <div class="space-y-5 text-[16.5px] leading-[1.8] text-black/75 mb-8">
-    <p>The main benchmark tests OOD within the training distribution's neighborhood. But what happens when <em>every object is completely novel</em>?</p>
-    <p>We ran a supplementary <strong>14-trial controlled experiment</strong> using 7 unseen fruits and 3 unseen plates — none appearing in any training trajectory. The results were striking:</p>
+    <p>The main benchmark tests OOD within the training distribution's neighborhood. We ran a supplementary <strong>14-trial controlled experiment</strong> where <em>every object is completely novel</em> — 7 unseen fruits and 3 unseen plates, none appearing in any training trajectory.</p>
+    <p><strong>The VLA–WAM gap inverts under full OOD.</strong> <span class="font-serif italic">π</span><sub>0.5</sub>-OneModel scores only <strong class="text-vla">4/140</strong> (one grasp in 14 trials). DreamZero scores <strong class="text-wam">34/140</strong> — and performs <em>better</em> with reasoning-style instructions ("the largest fruit") than explicit novel names ("pineapple").</p>
   </div>
 
-  <div class="grid grid-cols-2 gap-8 mb-8">
-    <div class="text-center">
-      <div class="font-serif text-3xl font-bold text-vla stat-num">4<span class="text-lg text-black/30">/140</span></div>
-      <div class="text-sm text-black/50 mt-1"><span class="font-serif italic">π</span><sub>0.5</sub>-OneModel</div>
+  <!-- Group Tabs -->
+  <div class="flex items-center gap-2 mb-2">
+    <div class="flex gap-0 border-b border-warm flex-1">
+      <div class="group-tab active px-4 py-2.5 text-sm font-medium" data-group="A" onclick="switchGroup('A')">A · OOD Explicit</div>
+      <div class="group-tab px-4 py-2.5 text-sm font-medium text-black/35" data-group="B" onclick="switchGroup('B')">B · Multi-Object</div>
+      <div class="group-tab px-4 py-2.5 text-sm font-medium text-black/35" data-group="C" onclick="switchGroup('C')">C · Reasoning</div>
+      <div class="group-tab px-4 py-2.5 text-sm font-medium text-black/35" data-group="D" onclick="switchGroup('D')">D · Plate Reasoning</div>
     </div>
-    <div class="text-center">
-      <div class="font-serif text-3xl font-bold text-wam stat-num">34<span class="text-lg text-black/30">/140</span></div>
-      <div class="text-sm text-black/50 mt-1">DreamZero</div>
+  </div>
+
+  <!-- Speed control -->
+  <div class="flex items-center gap-3 mb-6 mt-3">
+    <span class="text-xs text-black/30 font-mono">Speed</span>
+    <div class="flex gap-1">
+      <button class="speed-btn px-2.5 py-0.5 rounded text-xs font-mono" onclick="setSpeed(1)">1x</button>
+      <button class="speed-btn px-2.5 py-0.5 rounded text-xs font-mono" onclick="setSpeed(2)">2x</button>
+      <button class="speed-btn active px-2.5 py-0.5 rounded text-xs font-mono" onclick="setSpeed(4)">4x</button>
+      <button class="speed-btn px-2.5 py-0.5 rounded text-xs font-mono" onclick="setSpeed(6)">6x</button>
+      <button class="speed-btn px-2.5 py-0.5 rounded text-xs font-mono" onclick="setSpeed(8)">8x</button>
     </div>
+    <span class="ml-auto text-[10px] text-black/20 font-mono"><span class="font-serif italic">π</span><sub>0.5</sub> (left) · DZ (right)</span>
   </div>
 
-  <div class="space-y-5 text-[16.5px] leading-[1.8] text-black/75 mb-8">
-    <p><strong>The VLA–WAM gap inverts under full OOD.</strong> In-distribution, VLA outperforms DreamZero on semantic tasks (58.9 vs 32.7). Under full OOD, DreamZero outperforms VLA ~8.5:1. The VLA model achieves exactly one grasp across 14 trials.</p>
-    <p>Even more surprising: DreamZero performs <em>better</em> with reasoning-style instructions ("the largest fruit", "the rightmost plate") than with explicit novel object names ("pineapple", "loquat"). In 3 of 4 controlled same-scene comparisons, descriptive cues outperform explicit names — suggesting that when objects are unfamiliar, relational descriptions are more actionable than novel identifiers.</p>
-    <p>This points to a fundamental architectural difference: VLA's VLM backbone relies on pattern matching against training data distributions, while DreamZero's video-diffusion backbone encodes physical priors that generalize more robustly to novel visual inputs.</p>
-  </div>
+</main>
+<div class="max-w-[1600px] mx-auto px-8">
+  <div id="ood-gallery"></div>
+</div>
+<main class="max-w-3xl mx-auto px-6">
 
-  <div class="mb-20">
-    <a href="../maniparena-ood/" class="inline-flex items-center gap-2 text-sm font-medium text-black/60 hover:text-black underline underline-offset-4 transition-colors">
-      Full experiment details with trial-by-trial video comparisons &rarr;
-    </a>
-  </div>
+  <div class="mb-20"></div>
 
   <!-- Section 8: Competition -->
   <h2 id="competition" class="sec-heading font-serif text-2xl font-semibold mb-6 relative">
@@ -364,6 +382,128 @@ tailwind.config = {
     </div>
   </div>
 </footer>
+
+<script>
+const trials = {
+  1:  {g:'A', instr:'Place the <strong>pineapple</strong> on the <strong>purple round disc</strong>', pi:4, dz:4, note:'Both grasp only, fail to place.'},
+  2:  {g:'A', instr:'Place the <strong>green pear</strong> on the <strong>gray transparent plate</strong>', pi:0, dz:9, note:'DreamZero grasps and places successfully.'},
+  3:  {g:'A', instr:'Place the <strong>peach</strong> on the <strong>pink large basin</strong>', pi:0, dz:0, note:'Same scene as T12 — compare with "rightmost plate".'},
+  4:  {g:'A', instr:'Place the <strong>strawberry</strong> on the <strong>gray transparent plate</strong>', pi:0, dz:0, note:'Same scene as T13 — compare with "transparent plate".'},
+  5:  {g:'A', instr:'Place the <strong>loquat</strong> on the <strong>purple round disc</strong>', pi:0, dz:0},
+  6:  {g:'B', instr:'Place the <strong>strawberry</strong> on the <strong>purple disc</strong> <span class="text-black/30">(3 fruits)</span>', pi:0, dz:4, note:'Same scene as T9. DZ grasps here but fails with "smallest fruit".'},
+  7:  {g:'B', instr:'Place the <strong>loquat</strong> on the <strong>pink basin</strong> <span class="text-black/30">(3 fruits)</span>', pi:0, dz:0},
+  8:  {g:'B', instr:'Place the <strong>green pear</strong> on the <strong>gray plate</strong> <span class="text-black/30">(3 fruits)</span>', pi:0, dz:0, note:'Same scene as T11. DZ fails here but scores 9 with "largest fruit".'},
+  9:  {g:'C', instr:'Place the <em>smallest fruit</em> on the purple disc', pi:0, dz:0, note:'vs T6 (same scene): DZ drops 4→0.'},
+  10: {g:'C', instr:'Place the <em>green fruit</em> on the pink basin', pi:0, dz:0},
+  11: {g:'C', instr:'Place the <em>largest fruit</em> on the gray plate', pi:0, dz:9, note:'vs T8 (same scene): DZ rises 0→9.'},
+  12: {g:'D', instr:'Place the fruit on the <em>rightmost plate</em>', pi:0, dz:4, note:'vs T3 (same scene): DZ rises 0→4.'},
+  13: {g:'D', instr:'Place the fruit on the <em>transparent plate</em>', pi:0, dz:4, note:'vs T4 (same scene): DZ rises 0→4.'},
+  14: {g:'D', instr:'Place the fruit on the <em>largest plate</em>', pi:0, dz:0},
+};
+
+const groups = {
+  A: {name:'OOD Explicit Instructions', trials:[1,2,3,4,5],
+      desc:'Single fruit on the table with 3 plates. Instruction explicitly names both fruit and plate. Tests basic instruction following on completely unseen objects.'},
+  B: {name:'Multi-Object Explicit', trials:[6,7,8],
+      desc:'Three fruits on the table. Instruction explicitly names target. Tests object discrimination among multiple unseen distractors.'},
+  C: {name:'Multi-Object Reasoning', trials:[9,10,11],
+      desc:'Same scenes as B, but instruction uses reasoning ("smallest", "green", "largest"). Controlled comparison with B isolates the effect of instruction type.'},
+  D: {name:'Plate Reasoning', trials:[12,13,14],
+      desc:'Same scenes as A, but plate described by attribute ("rightmost", "transparent", "largest"). Controlled comparison with A isolates the effect of plate description.'},
+};
+
+function pill(s) {
+  if (s >= 9) return '<span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-bold" style="background:#e8f5e9;color:#2e7d32">'+s+'</span>';
+  if (s >= 4) return '<span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-bold" style="background:#fff8e1;color:#f57f17">'+s+'</span>';
+  return '<span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-bold" style="background:#fce4ec;color:#c62828">0</span>';
+}
+
+function renderCell(n) {
+  const t = trials[n];
+  return `<div>
+    <div class="flex items-baseline gap-2 mb-3">
+      <span class="font-mono text-sm font-bold text-black/60">T${n}</span>
+      <span class="text-sm text-black/60">${t.instr}</span>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <div class="vid-wrap aspect-video bg-black/5 rounded overflow-hidden">
+          <video class="trial-video w-full h-full object-cover" controls autoplay loop muted playsinline>
+            <source src="videos/pi05_t${n}.mp4" type="video/mp4"/>
+          </video>
+        </div>
+        <div class="mt-1 flex items-center justify-between px-0.5">
+          <span class="text-[10px] text-black/30 font-mono"><span class="font-serif italic">π</span><sub>0.5</sub></span>
+          ${pill(t.pi)}
+        </div>
+      </div>
+      <div>
+        <div class="vid-wrap aspect-video bg-black/5 rounded overflow-hidden">
+          <video class="trial-video w-full h-full object-cover" controls autoplay loop muted playsinline>
+            <source src="videos/dz_t${n}.mp4" type="video/mp4"/>
+          </video>
+        </div>
+        <div class="mt-1 flex items-center justify-between px-0.5">
+          <span class="text-[10px] text-black/30 font-mono">DZ</span>
+          ${pill(t.dz)}
+        </div>
+      </div>
+    </div>
+    ${t.note ? '<div class="text-xs text-black/35 mt-2 italic">'+t.note+'</div>' : ''}
+  </div>`;
+}
+
+function renderGroup(gid) {
+  const g = groups[gid];
+  let html = '<div class="mb-4"><p class="text-sm text-black/50 leading-relaxed">' + g.desc + '</p></div>';
+  const t = g.trials;
+  for (let i = 0; i < t.length; i += 2) {
+    html += '<div class="grid grid-cols-2 gap-x-20 gap-y-0 mb-10">';
+    html += renderCell(t[i]);
+    if (t[i+1]) html += renderCell(t[i+1]);
+    html += '</div>';
+  }
+  return html;
+}
+
+// Pre-render all groups
+const panelHTML = {};
+for (const gid of ['A','B','C','D']) {
+  panelHTML[gid] = '<div class="group-panel" data-group="'+gid+'">'+renderGroup(gid)+'</div>';
+}
+
+function initGallery() {
+  const el = document.getElementById('ood-gallery');
+  el.innerHTML = Object.values(panelHTML).join('');
+  document.querySelector('.group-panel[data-group="A"]').classList.add('active');
+  document.querySelectorAll('.trial-video').forEach(v => { v.playbackRate = 4; });
+}
+
+function switchGroup(gid) {
+  // tabs
+  document.querySelectorAll('.group-tab').forEach(t => { t.classList.remove('active'); t.classList.add('text-black/35'); });
+  document.querySelector('.group-tab[data-group="'+gid+'"]').classList.add('active');
+  document.querySelector('.group-tab[data-group="'+gid+'"]').classList.remove('text-black/35');
+  // panels
+  document.querySelectorAll('.group-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector('.group-panel[data-group="'+gid+'"]').classList.add('active');
+  // pause all, play active
+  document.querySelectorAll('.trial-video').forEach(v => { v.pause(); v.currentTime = 0; });
+  const speed = document.querySelector('.speed-btn.active')?.textContent?.replace('x','') || 4;
+  document.querySelector('.group-panel.active').querySelectorAll('.trial-video').forEach(v => {
+    v.playbackRate = Number(speed);
+    v.play();
+  });
+}
+
+function setSpeed(rate) {
+  document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.trial-video').forEach(v => { v.playbackRate = rate; });
+}
+
+initGallery();
+</script>
 
 </body>
 </html>
